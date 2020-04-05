@@ -17,16 +17,16 @@ void Drawer::update()
             window.close();
     }
 
-//    if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
-//    {
-//        field.addParticle(sf::Mouse::getPosition().x - window.getPosition().x,
-//                          sf::Mouse::getPosition().y - window.getPosition().y, 1);
-//    }
-//    else if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
-//    {
-//        field.addParticle(sf::Mouse::getPosition().x - window.getPosition().x,
-//                          sf::Mouse::getPosition().y - window.getPosition().y, -1);
-//    }
+    if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    {
+        field->addParticle(sf::Mouse::getPosition().x - window.getPosition().x,
+                          sf::Mouse::getPosition().y - window.getPosition().y, 1);
+    }
+    else if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
+    {
+        field->addParticle(sf::Mouse::getPosition().x - window.getPosition().x,
+                          sf::Mouse::getPosition().y - window.getPosition().y, -1);
+    }
 }
 
 void Drawer::render()

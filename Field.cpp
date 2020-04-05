@@ -8,7 +8,7 @@ Field::Field()
 
 double Field::particleFieldAt(int x, int y, Particle& particle)
 {
-    if(x != particle.x || y != particle.y)
+//    if(x != particle.x || y != particle.y)
         return 1/(4*3.14)*abs(particle.q)/(pow(x - particle.x, 2) + pow(y - particle.y, 2));
 }
 
