@@ -81,10 +81,7 @@ void Drawer::drawParticles()
     {
         this->particle.setPosition(particle.x, particle.y);
 
-        if(particle.q > 0)
-            this->particle.setFillColor(sf::Color::White);
-        else
-            this->particle.setFillColor(sf::Color::Black);
+        this->particle.setFillColor(particle.q > 0 ? sf::Color::White) : sf::Color::Black;
 
         this->particle.setRadius(10);
 
