@@ -12,12 +12,12 @@ class Drawer
 
         sf::RenderWindow window;
         sf::Event sfEvent;
-        sf::Clock dtClock;
-        float dt;
 
         sf::CircleShape particle;
         sf::RectangleShape fieldPoint;
         Field* field;
+
+        void updateParticles();
 
         void drawField();
         void drawParticles();
@@ -26,7 +26,6 @@ class Drawer
 
         explicit Drawer(Field* field);
 
-        void updateDT();
         void update();
         void render();
         void run();

@@ -17,15 +17,20 @@ void Drawer::update()
             window.close();
     }
 
+    updateParticles();
+}
+
+void Drawer::updateParticles()
+{
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        field->addParticle(sf::Mouse::getPosition().x - window.getPosition().x,
-                          sf::Mouse::getPosition().y - window.getPosition().y, 1);
+        field->addParticle(sf::Mouse::getPosition(window).x,
+                           sf::Mouse::getPosition(window).y, 1);
     }
     else if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
     {
-        field->addParticle(sf::Mouse::getPosition().x - window.getPosition().x,
-                          sf::Mouse::getPosition().y - window.getPosition().y, -1);
+        field->addParticle(sf::Mouse::getPosition(window).x,
+                           sf::Mouse::getPosition(window).y, -1);
     }
 }
 
@@ -39,16 +44,10 @@ void Drawer::render()
     window.display();
 }
 
-void Drawer::updateDT()
-{
-    dt = dtClock.restart().asSeconds();
-}
-
 void Drawer::run()
 {
     while(window.isOpen())
     {
-        updateDT();
         update();
         render();
     }
@@ -64,11 +63,15 @@ void Drawer::drawField()
             fieldPoint.setPosition(i, j);
             fieldPoint.setSize(sf::Vector2f(5, 5));
 
-//            std::cout << "M(" << i << "," << j << ") ";
-            if(field->nearPositive(i, j))
-                fieldPoint.setFillColor(sf::Color::Red);
+            if(field->getParticles()->empty())
+            {
+                fieldPoint.setFillColor(sf::Color::White);
+            }
             else
-                fieldPoint.setFillColor(sf::Color::Blue);
+            {
+                field->nearPositive(i, j) ? fieldPoint.setFillColor(sf::Color::Red)
+                                          : fieldPoint.setFillColor(sf::Color::Blue);
+            }
 
             window.draw(fieldPoint);
         }
@@ -81,10 +84,8 @@ void Drawer::drawParticles()
     {
         this->particle.setPosition(particle.x, particle.y);
 
-        if(particle.q > 0)
-            this->particle.setFillColor(sf::Color::White);
-        else
-            this->particle.setFillColor(sf::Color::Black);
+        particle.q > 0 ? this->particle.setFillColor(sf::Color::White)
+                       : this->particle.setFillColor(sf::Color::Black);
 
         this->particle.setRadius(10);
 

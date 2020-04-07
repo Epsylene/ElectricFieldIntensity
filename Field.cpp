@@ -26,6 +26,7 @@ double Field::fieldAtPoint(int x, int y)
 
 void Field::addParticle(int x, int y, short charge)
 {
+    int temp;
     particuli.emplace_back(x, y, charge);
 }
 

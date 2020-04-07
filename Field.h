@@ -33,6 +33,8 @@ class Field
 
         double particleFieldAt(int x, int y, Particle& particle);
 
+        int counter = 0;
+
     public:
 
         Field();
