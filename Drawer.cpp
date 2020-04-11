@@ -7,6 +7,10 @@ Drawer::Drawer(Field* field): field(field)
     windowBounds.width = 800;
     windowBounds.height = 450;
     window.create(windowBounds, "Lignes de champ", sf::Style::Titlebar | sf::Style::Close);
+
+    fieldImage.create(window.getSize().x, window.getSize().y);
+    fieldTexture.create(window.getSize().x, window.getSize().y);
+    fieldSprite.setTexture(fieldTexture);
 }
 
 void Drawer::update()
@@ -36,7 +40,7 @@ void Drawer::updateParticles()
 
 void Drawer::render()
 {
-    window.clear();
+    window.clear(sf::Color::White);
 
     drawField();
     drawParticles();
@@ -55,27 +59,20 @@ void Drawer::run()
 
 void Drawer::drawField()
 {
-
-    for (int i = 0; i < window.getSize().x; i+=5)
+    for (int i = 0; i < window.getSize().x; ++i)
     {
-        for (int j = 0; j < window.getSize().y; j+=5)
+        for (int j = 0; j < window.getSize().y; ++j)
         {
-            fieldPoint.setPosition(i, j);
-            fieldPoint.setSize(sf::Vector2f(5, 5));
-
-            if(field->getParticles()->empty())
+            if(!field->getParticles()->empty())
             {
-                fieldPoint.setFillColor(sf::Color::White);
+                field->nearPositive(i, j) ? fieldImage.setPixel(i, j, sf::Color::Red)
+                                          : fieldImage.setPixel(i, j, sf::Color::Blue);
             }
-            else
-            {
-                field->nearPositive(i, j) ? fieldPoint.setFillColor(sf::Color::Red)
-                                          : fieldPoint.setFillColor(sf::Color::Blue);
-            }
-
-            window.draw(fieldPoint);
         }
     }
+
+    fieldTexture.update(fieldImage);
+    window.draw(fieldSprite);
 }
 
 void Drawer::drawParticles()

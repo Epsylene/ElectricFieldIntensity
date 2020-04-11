@@ -33,8 +33,6 @@ class Field
 
         double particleFieldAt(int x, int y, Particle& particle);
 
-        int counter = 0;
-
     public:
 
         Field();
@@ -42,6 +40,5 @@ class Field
         void addParticle(int x, int y, short charge);
         double fieldAtPoint(int x, int y);
         bool nearPositive(int x, int y);
-        sf::Vector2f getPosition(int index);
         std::vector<Particle>* getParticles();
 };

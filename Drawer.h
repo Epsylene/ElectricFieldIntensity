@@ -14,7 +14,9 @@ class Drawer
         sf::Event sfEvent;
 
         sf::CircleShape particle;
-        sf::RectangleShape fieldPoint;
+        sf::Image fieldImage;
+        sf::Texture fieldTexture;
+        sf::Sprite fieldSprite;
         Field* field;
 
         void updateParticles();

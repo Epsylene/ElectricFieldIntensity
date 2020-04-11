@@ -26,32 +26,20 @@ double Field::fieldAtPoint(int x, int y)
 
 void Field::addParticle(int x, int y, short charge)
 {
-    int temp;
     particuli.emplace_back(x, y, charge);
-}
-
-sf::Vector2f Field::getPosition(int index)
-{
-    if(!particuli.empty())
-        return sf::Vector2f(particuli[index].x, particuli[index].y);
-    else
-        return sf::Vector2f(0, 0);
 }
 
 bool Field::nearPositive(int x, int y)
 {
-    double E_pos = 0;
-    double E_neg = 0;
+    E = 0;
 
     for (auto &particle: particuli)
     {
-        if(particle.q > 0)
-            E_pos += particleFieldAt(x, y, particle);
-        else
-            E_neg += particleFieldAt(x, y, particle);
+        particle.q > 0 ? E += particleFieldAt(x, y, particle)
+                       : E -= particleFieldAt(x, y, particle);
     }
     
-    return E_pos > E_neg;
+    return E > 0;
 }
 
 std::vector<Field::Particle> *Field::getParticles()
