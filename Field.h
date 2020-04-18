@@ -18,27 +18,32 @@ class Field
         {
             public:
 
-                int x, y;
+                short x, y;
                 short q;
 
-                Particle(int x, int y, short charge):
+                Particle(short x, short y, short charge):
                         x(x), y(y), q(charge)
-                {
+                        {
 
-                }
+                        }
         };
 
         std::vector<Particle> particuli;
-        double E;
-
-        double particleFieldAt(int x, int y, Particle& particle);
+        std::vector<float> fields;
+        float E;
 
     public:
 
+        float particleFieldAt(int x, int y, Particle &particle);
         Field();
 
-        void addParticle(int x, int y, short charge);
-        double fieldAtPoint(int x, int y);
-        bool nearPositive(int x, int y);
+        float lower = 0;
+        float upper = 0;
+
+        void addParticle(short x, short y, short charge);
+        bool nearPositive(short x, short y);
+        float fieldAtPoint(short x, short y);
+        void setFieldRange();
         std::vector<Particle>* getParticles();
+        std::vector<float>* getFields();
 };

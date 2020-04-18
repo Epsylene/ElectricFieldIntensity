@@ -6,37 +6,24 @@ Field::Field()
 
 }
 
-double Field::particleFieldAt(int x, int y, Particle& particle)
+float Field::particleFieldAt(int x, int y, Particle &particle)
 {
-//    if(x != particle.x || y != particle.y)
-        return 1/(4*3.14)*abs(particle.q)/(pow(x - particle.x, 2) + pow(y - particle.y, 2));
+//    return 1/(4*3.14f)*particle.q/(pow(x - particle.x, 2) + pow(y - particle.y, 2));
+    return 1/(4*3.14) * particle.q/sqrt(sqrt(sqrt(((pow(x - particle.x, 2) + pow(y - particle.y, 2))))));
 }
 
-double Field::fieldAtPoint(int x, int y)
-{
-    E = 0;
-    for (auto &particle: particuli)
-    {
-        if(x != particle.x || y != particle.y)
-            E += 1/(4*3.14)*particle.q/(pow(x - particle.x, 2) + pow(y - particle.y, 2));
-    }
-
-    return E;
-}
-
-void Field::addParticle(int x, int y, short charge)
+void Field::addParticle(short x, short y, short charge)
 {
     particuli.emplace_back(x, y, charge);
 }
 
-bool Field::nearPositive(int x, int y)
+bool Field::nearPositive(short x, short y)
 {
     E = 0;
 
     for (auto &particle: particuli)
     {
-        particle.q > 0 ? E += particleFieldAt(x, y, particle)
-                       : E -= particleFieldAt(x, y, particle);
+        E += particleFieldAt(x, y, particle);
     }
     
     return E > 0;
@@ -45,4 +32,32 @@ bool Field::nearPositive(int x, int y)
 std::vector<Field::Particle> *Field::getParticles()
 {
     return &particuli;
+}
+
+float Field::fieldAtPoint(short x, short y)
+{
+    E = 0;
+
+    for (auto &particle: particuli)
+    {
+        E += particleFieldAt(x, y, particle);
+    }
+
+    return E;
+}
+
+void Field::setFieldRange()
+{
+    for (auto &localField: fields)
+    {
+        if(upper < localField)
+            upper = localField;
+        if(lower > localField)
+            lower = localField;
+    }
+}
+
+std::vector<float> *Field::getFields()
+{
+    return &fields;
 }

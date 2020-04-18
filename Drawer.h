@@ -20,13 +20,15 @@ class Drawer
         Field* field;
 
         void updateParticles();
+        void updateField();
 
-        void drawField();
         void drawParticles();
+        static sf::Color getThreeGradientColor(float val);
 
     public:
 
         explicit Drawer(Field* field);
+        virtual ~Drawer();
 
         void update();
         void render();
