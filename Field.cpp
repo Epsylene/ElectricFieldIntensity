@@ -61,3 +61,9 @@ std::vector<float> *Field::getFields()
 {
     return &fields;
 }
+
+Field::~Field()
+{
+//    delete getFields();
+//    delete getParticles();
+}

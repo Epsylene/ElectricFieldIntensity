@@ -15,7 +15,7 @@ Drawer::Drawer(Field* field): field(field)
 
 Drawer::~Drawer()
 {
-    delete field;
+//    delete field;
 }
 
 void Drawer::update()
@@ -24,25 +24,26 @@ void Drawer::update()
     {
         if(sfEvent.type == sf::Event::Closed)
             window.close();
+
+        updateParticles();
     }
 
     updateField();
-    updateParticles();
 }
 
 void Drawer::updateParticles()
 {
-    if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && sfEvent.KeyPressed)
     {
         field->addParticle(sf::Mouse::getPosition(window).x,
                            sf::Mouse::getPosition(window).y, 1);
-//        std::cout << "\nNew Particle:\n";
+//        printf("%i", field->getParticles()->size());
     }
-    else if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
+    else if(sf::Mouse::isButtonPressed(sf::Mouse::Right) && sfEvent.KeyPressed)
     {
         field->addParticle(sf::Mouse::getPosition(window).x,
                            sf::Mouse::getPosition(window).y, -1);
-//        std::cout << "\nNew Particle:\n";
+//        printf("%i", field->getParticles()->size());
     }
 }
 
@@ -100,8 +101,7 @@ void Drawer::drawParticles()
 
 sf::Color Drawer::getThreeGradientColor(float val)
 {
-    const int NC = 3;
-    static float color[NC][3] = { {0,0,1}, {1,1,1}, {1,0,0} };
+    static float color[3][3] = { {0,0,1}, {1,1,1}, {1,0,0} };
 
     int idx1, idx2;
     float localVal = 0;
@@ -109,10 +109,10 @@ sf::Color Drawer::getThreeGradientColor(float val)
     if(val <= 0)
         idx1 = idx2 = 0;
     else if(val >= 1)
-        idx1 = idx2 = NC-1;
+        idx1 = idx2 = 2;
     else
     {
-        val = val * (NC - 1);
+        val = val * 2;
         idx1  = std::floor(val);
         idx2  = idx1+1;
         localVal = val - (float)idx1;

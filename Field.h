@@ -36,6 +36,7 @@ class Field
 
         float particleFieldAt(int x, int y, Particle &particle);
         Field();
+        ~Field();
 
         float lower = 0;
         float upper = 0;
