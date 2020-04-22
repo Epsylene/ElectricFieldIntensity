@@ -11,11 +11,12 @@ Drawer::Drawer(Field* field): field(field)
     fieldImage.create(window.getSize().x, window.getSize().y, sf::Color::White);
     fieldTexture.create(window.getSize().x, window.getSize().y);
     fieldSprite.setTexture(fieldTexture);
+
+    window.setKeyRepeatEnabled(false);
 }
 
 Drawer::~Drawer()
 {
-//    delete field;
 }
 
 void Drawer::update()
@@ -35,16 +36,48 @@ void Drawer::updateParticles()
 {
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && sfEvent.KeyPressed)
     {
-        field->addParticle(sf::Mouse::getPosition(window).x,
-                           sf::Mouse::getPosition(window).y, 1);
+        if(!field->getParticles()->empty())
+        {
+            if(field->getParticles()->back().x != sf::Mouse::getPosition(window).x || field->getParticles()->back().y != sf::Mouse::getPosition(window).y)
+                field->getParticles()->emplace_back(sf::Mouse::getPosition(window).x,
+                                                    sf::Mouse::getPosition(window).y, 1);
+        }
+        else
+        {
+            field->getParticles()->emplace_back(sf::Mouse::getPosition(window).x,
+                                                sf::Mouse::getPosition(window).y, 1);
+        }
+
 //        printf("%i", field->getParticles()->size());
     }
     else if(sf::Mouse::isButtonPressed(sf::Mouse::Right) && sfEvent.KeyPressed)
     {
-        field->addParticle(sf::Mouse::getPosition(window).x,
-                           sf::Mouse::getPosition(window).y, -1);
+        if(!field->getParticles()->empty())
+        {
+            if(field->getParticles()->back().x != sf::Mouse::getPosition(window).x || field->getParticles()->back().y != sf::Mouse::getPosition(window).y)
+                field->getParticles()->emplace_back(sf::Mouse::getPosition(window).x,
+                                                    sf::Mouse::getPosition(window).y, -1);
+        }
+        else
+        {
+            field->getParticles()->emplace_back(sf::Mouse::getPosition(window).x,
+                                                sf::Mouse::getPosition(window).y, -1);
+        }
+
 //        printf("%i", field->getParticles()->size());
     }
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::X) && sfEvent.type == sf::Event::KeyPressed)
+    {
+        if(sfEvent.key.shift)
+            field->getParticles()->clear();
+        else if(!field->getParticles()->empty())
+            field->getParticles()->pop_back();
+
+//        printf("X");
+//        printf("%i", field->getParticles()->size());
+    }
+
 }
 
 void Drawer::updateField()
@@ -67,6 +100,10 @@ void Drawer::updateField()
                 }
 
                 fieldImage.setPixel(i, j, getThreeGradientColor((field->fieldAtPoint(i, j) - field->lower) / (field->upper - field->lower)));
+            }
+            else
+            {
+                fieldImage.setPixel(i, j, sf::Color::White);
             }
         }
     }
