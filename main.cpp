@@ -4,7 +4,7 @@
 int main()
 {
     Field field;
-    Drawer d(&field);
+    Drawer d(field);
     d.run();
 
     return 0;

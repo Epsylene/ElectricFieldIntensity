@@ -1,7 +1,7 @@
 
 #include "Drawer.h"
 
-Drawer::Drawer(Field* field): field(field)
+Drawer::Drawer(Field& field): field(field)
 {
     sf::VideoMode windowBounds = sf::VideoMode::getDesktopMode();
     windowBounds.width = 800;
@@ -12,11 +12,14 @@ Drawer::Drawer(Field* field): field(field)
     fieldTexture.create(window.getSize().x, window.getSize().y);
     fieldSprite.setTexture(fieldTexture);
 
-    window.setKeyRepeatEnabled(false);
-}
+    style = Style::UGLY;
 
-Drawer::~Drawer()
-{
+    font.loadFromFile("../Ressources/DTM-Mono.otf");
+    fieldText.setFont(font);
+    fieldText.setCharacterSize(15);
+    fieldText.setFillColor(sf::Color::Black);
+
+    window.setKeyRepeatEnabled(false);
 }
 
 void Drawer::update()
@@ -36,48 +39,47 @@ void Drawer::updateParticles()
 {
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && sfEvent.KeyPressed)
     {
-        if(!field->getParticles()->empty())
+        if(!field.getParticles()->empty())
         {
-            if(field->getParticles()->back().x != sf::Mouse::getPosition(window).x || field->getParticles()->back().y != sf::Mouse::getPosition(window).y)
-                field->getParticles()->emplace_back(sf::Mouse::getPosition(window).x,
+            if(field.getParticles()->back().x != sf::Mouse::getPosition(window).x || field.getParticles()->back().y != sf::Mouse::getPosition(window).y)
+                field.getParticles()->emplace_back(sf::Mouse::getPosition(window).x,
                                                     sf::Mouse::getPosition(window).y, 1);
         }
         else
         {
-            field->getParticles()->emplace_back(sf::Mouse::getPosition(window).x,
+            field.getParticles()->emplace_back(sf::Mouse::getPosition(window).x,
                                                 sf::Mouse::getPosition(window).y, 1);
         }
-
-//        printf("%i", field->getParticles()->size());
     }
     else if(sf::Mouse::isButtonPressed(sf::Mouse::Right) && sfEvent.KeyPressed)
     {
-        if(!field->getParticles()->empty())
+        if(!field.getParticles()->empty())
         {
-            if(field->getParticles()->back().x != sf::Mouse::getPosition(window).x || field->getParticles()->back().y != sf::Mouse::getPosition(window).y)
-                field->getParticles()->emplace_back(sf::Mouse::getPosition(window).x,
+            if(field.getParticles()->back().x != sf::Mouse::getPosition(window).x || field.getParticles()->back().y != sf::Mouse::getPosition(window).y)
+                field.getParticles()->emplace_back(sf::Mouse::getPosition(window).x,
                                                     sf::Mouse::getPosition(window).y, -1);
         }
         else
         {
-            field->getParticles()->emplace_back(sf::Mouse::getPosition(window).x,
+            field.getParticles()->emplace_back(sf::Mouse::getPosition(window).x,
                                                 sf::Mouse::getPosition(window).y, -1);
         }
-
-//        printf("%i", field->getParticles()->size());
     }
 
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::X) && sfEvent.type == sf::Event::KeyPressed)
     {
         if(sfEvent.key.shift)
-            field->getParticles()->clear();
-        else if(!field->getParticles()->empty())
-            field->getParticles()->pop_back();
-
-//        printf("X");
-//        printf("%i", field->getParticles()->size());
+            field.getParticles()->clear();
+        else if(!field.getParticles()->empty())
+            field.getParticles()->pop_back();
     }
 
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && sfEvent.type == sf::Event::KeyPressed)
+        style = Style::UGLY;
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num2) && sfEvent.type == sf::Event::KeyPressed)
+        style = Style::BEAUTY;
+//    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) && sfEvent.type == sf::Event::KeyPressed)
+//        style = Style::TEXT;
 }
 
 void Drawer::updateField()
@@ -86,20 +88,48 @@ void Drawer::updateField()
     {
         for (int j = 0; j < window.getSize().y; ++j)
         {
-            if(!field->getParticles()->empty())
-            {
-//                field->nearPositive(i, j) ? fieldImage.setPixel(i, j, sf::Color::Red)
-//                                          : fieldImage.setPixel(i, j, sf::Color::Blue);
+            static float E;
 
-                if(i % 30 == 0 && j % 30 == 0)
+            if(!field.getParticles()->empty())
+            {
+                E = field.fieldAtPoint(i, j);
+
+                switch (style)
                 {
-                    field->getFields()->push_back(field->fieldAtPoint(i, j));
-                    field->upper = field->getFields()->at(0);
-                    field->lower = field->getFields()->at(0);
-                    field->setFieldRange();
+                    case UGLY:
+
+                        field.nearPositive(i, j) ? fieldImage.setPixel(i, j, sf::Color::Red)
+                                                 : fieldImage.setPixel(i, j, sf::Color::Blue);
+
+                        break;
+
+                    case BEAUTY:
+
+                        if(i % 30 == 0 && j % 30 == 0)
+                        {
+                            field.getFields()->push_back(E);
+                            field.setFieldRange();
+                        }
+
+                        fieldImage.setPixel(i, j, getThreeGradientColor((E - field.lower) / (field.upper - field.lower)));
+
+                        break;
+
+                    case TEXT:
+
+                        //@TODO: solve the text style problem
+
+                        if(i % 30 == 0 && j % 20 == 0)
+                        {
+                            fieldText.setPosition(i, j);
+                            fieldText.setString(std::to_string((int)std::round(100 * E)));
+                            window.draw(fieldText);
+                        }
+
+                        break;
                 }
 
-                fieldImage.setPixel(i, j, getThreeGradientColor((field->fieldAtPoint(i, j) - field->lower) / (field->upper - field->lower)));
+                E = 0;
             }
             else
             {
@@ -115,22 +145,25 @@ void Drawer::render()
 {
     window.clear();
 
-    window.draw(fieldSprite);
-    drawParticles();
+    if(style != Style::TEXT)
+        window.draw(fieldSprite);
+
+    if(style == Style::UGLY)
+        drawParticles();
 
     window.display();
 }
 
 void Drawer::drawParticles()
 {
-    for (auto& particle: *field->getParticles())
+    for (auto& currentParticle: *field.getParticles())
     {
-        this->particle.setPosition(particle.x - 5, particle.y + 5);
+        this->particle.setPosition(currentParticle.x - 10, currentParticle.y - 10);
 
-        particle.q > 0 ? this->particle.setFillColor(sf::Color::Red)
-                       : this->particle.setFillColor(sf::Color::Blue);
+        currentParticle.q > 0 ? this->particle.setFillColor(sf::Color::White)
+                              : this->particle.setFillColor(sf::Color::Black);
 
-//        this->particle.setRadius(10);
+        this->particle.setRadius(10);
 
         window.draw(this->particle);
     }

@@ -6,6 +6,11 @@
 #include "SFML/Graphics.hpp"
 #include "Field.h"
 
+enum Style
+{
+    UGLY = 0, BEAUTY, TEXT
+};
+
 class Drawer
 {
     private:
@@ -14,10 +19,14 @@ class Drawer
         sf::Event sfEvent;
 
         sf::CircleShape particle;
+        sf::Font font;
+        sf::Text fieldText;
         sf::Image fieldImage;
         sf::Texture fieldTexture;
         sf::Sprite fieldSprite;
-        Field* field;
+        Field& field;
+
+        Style style;
 
         void updateParticles();
         void updateField();
@@ -27,8 +36,7 @@ class Drawer
 
     public:
 
-        explicit Drawer(Field* field);
-        virtual ~Drawer();
+        explicit Drawer(Field& field);
 
         void update();
         void render();

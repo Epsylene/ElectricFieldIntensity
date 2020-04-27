@@ -8,6 +8,7 @@ Field::Field()
 
 float Field::particleFieldAt(int x, int y, Particle &particle)
 {
+    //@TODO: change E formula depending on style
 //    return 1/(4*3.14f)*particle.q/(pow(x - particle.x, 2) + pow(y - particle.y, 2));
     return 1/(4*3.14) * particle.q/sqrt(sqrt(sqrt(((pow(x - particle.x, 2) + pow(y - particle.y, 2))))));
 }
@@ -34,7 +35,7 @@ std::vector<Field::Particle> *Field::getParticles()
     return &particuli;
 }
 
-float Field::fieldAtPoint(short x, short y)
+float Field::fieldAtPoint(int x, int y)
 {
     E = 0;
 
@@ -60,10 +61,4 @@ void Field::setFieldRange()
 std::vector<float> *Field::getFields()
 {
     return &fields;
-}
-
-Field::~Field()
-{
-//    delete getFields();
-//    delete getParticles();
 }
