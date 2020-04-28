@@ -15,7 +15,7 @@ Drawer::Drawer(Field& field): field(field)
     style = Style::UGLY;
     realistic = true;
 
-    font.loadFromFile("../Ressources/DTM-Mono.otf");
+    font.loadFromFile("Ressources/DTM-Mono.otf");
 
     window.setKeyRepeatEnabled(false);
 }
@@ -137,10 +137,7 @@ void Drawer::updateField()
                             fieldText.emplace_back();
                             fieldText.back().setFont(font);
                             fieldText.back().setCharacterSize(15);
-
-                            realistic ? fieldText.back().setString(std::to_string((int)std::round(E)))
-                                      : fieldText.back().setString(std::to_string((int)std::round(100*E)));
-
+                            fieldText.back().setString(std::to_string((int)std::round(E)));
                             fieldText.back().setPosition(i, j);
                             fieldText.back().setFillColor(sf::Color::Black);
                         }
