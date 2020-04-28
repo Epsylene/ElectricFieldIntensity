@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.7)
 set(PROJECT_NAME ElectricFieldIntensity)
 
 project(${PROJECT_NAME})
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -O2")
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -O2")
+set(CMAKE_CXX_STANDARD 17)
 
 set(SOURCE_FILES main.cpp Drawer.cpp Drawer.h Field.cpp Field.h)
 

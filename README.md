@@ -12,6 +12,10 @@ You can choose between three drawing modes:
 
 There is also a *Realistic* flag which can be set on and off with `R`; in the first case, the field is calculated with the standard formula, in the second, with a modified one.
 
+## Build tools
+
+The code was written in C++17 (although any version higher than C++11 should be fine) and compiled with Mingw-w64 7.3.0. **It is very important to use this version only, and on 64-bits architecture; otherwise, SFML might not get correctly linked**. SFML 2.5.1 and CMake 3.15 were used.
+
 # Images
 ## Ugly
 
