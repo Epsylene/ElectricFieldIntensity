@@ -4,8 +4,8 @@
 Drawer::Drawer(Field& field): field(field)
 {
     sf::VideoMode windowBounds = sf::VideoMode::getDesktopMode();
-    windowBounds.width = 800;
-    windowBounds.height = 450;
+    windowBounds.width = 1024;
+    windowBounds.height = 576;
     window.create(windowBounds, "Lignes de champ", sf::Style::Titlebar | sf::Style::Close);
 
     fieldImage.create(window.getSize().x, window.getSize().y, sf::Color::White);
@@ -137,7 +137,9 @@ void Drawer::updateField()
                             fieldText.emplace_back();
                             fieldText.back().setFont(font);
                             fieldText.back().setCharacterSize(15);
-                            fieldText.back().setString(std::to_string((int)std::round(E)));
+
+                            realistic ? fieldText.back().setString(std::to_string((int)std::round(E)))
+                                      : fieldText.back().setString(std::to_string((int)std::round(100*E)));
                             fieldText.back().setPosition(i, j);
                             fieldText.back().setFillColor(sf::Color::Black);
                         }
