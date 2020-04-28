@@ -32,7 +32,7 @@ class Field
         std::vector<float> fields;
         float E;
 
-        float particleFieldAt(int x, int y, Particle &particle);
+        float particleFieldAt(int x, int y, Particle &particle, bool realistic);
 
     public:
 
@@ -41,9 +41,8 @@ class Field
         float lower = 0;
         float upper = 0;
 
-        void addParticle(short x, short y, short charge);
-        bool nearPositive(short x, short y);
-        float fieldAtPoint(int x, int y);
+        bool nearPositive(int x, int y, bool realistic);
+        float fieldAtPoint(int x, int y, bool realistic);
         void setFieldRange();
         std::vector<Particle>* getParticles();
         std::vector<float>* getFields();

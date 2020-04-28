@@ -20,15 +20,16 @@ class Drawer
 
         sf::CircleShape particle;
         sf::Font font;
-        sf::Text fieldText;
+        std::vector<sf::Text> fieldText;
         sf::Image fieldImage;
         sf::Texture fieldTexture;
         sf::Sprite fieldSprite;
         Field& field;
 
         Style style;
+        bool realistic;
 
-        void updateParticles();
+        void updateKeybinds();
         void updateField();
 
         void drawParticles();

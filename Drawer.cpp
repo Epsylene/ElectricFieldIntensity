@@ -13,11 +13,9 @@ Drawer::Drawer(Field& field): field(field)
     fieldSprite.setTexture(fieldTexture);
 
     style = Style::UGLY;
+    realistic = true;
 
     font.loadFromFile("../Ressources/DTM-Mono.otf");
-    fieldText.setFont(font);
-    fieldText.setCharacterSize(15);
-    fieldText.setFillColor(sf::Color::Black);
 
     window.setKeyRepeatEnabled(false);
 }
@@ -29,13 +27,13 @@ void Drawer::update()
         if(sfEvent.type == sf::Event::Closed)
             window.close();
 
-        updateParticles();
+        updateKeybinds();
     }
 
     updateField();
 }
 
-void Drawer::updateParticles()
+void Drawer::updateKeybinds()
 {
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && sfEvent.KeyPressed)
     {
@@ -75,11 +73,26 @@ void Drawer::updateParticles()
     }
 
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && sfEvent.type == sf::Event::KeyPressed)
+    {
         style = Style::UGLY;
+        realistic = true;
+    }
     else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num2) && sfEvent.type == sf::Event::KeyPressed)
+    {
         style = Style::BEAUTY;
-//    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) && sfEvent.type == sf::Event::KeyPressed)
-//        style = Style::TEXT;
+        realistic = false;
+    }
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) && sfEvent.type == sf::Event::KeyPressed)
+    {
+        style = Style::TEXT;
+        realistic = false;
+    }
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::R) && sfEvent.type == sf::Event::KeyPressed)
+    {
+        realistic ? realistic = false
+                  : realistic = true;
+    }
 }
 
 void Drawer::updateField()
@@ -92,14 +105,14 @@ void Drawer::updateField()
 
             if(!field.getParticles()->empty())
             {
-                E = field.fieldAtPoint(i, j);
+                E = field.fieldAtPoint(i, j, realistic);
 
                 switch (style)
                 {
                     case UGLY:
 
-                        field.nearPositive(i, j) ? fieldImage.setPixel(i, j, sf::Color::Red)
-                                                 : fieldImage.setPixel(i, j, sf::Color::Blue);
+                        field.nearPositive(i, j, realistic) ? fieldImage.setPixel(i, j, sf::Color::Red)
+                                                            : fieldImage.setPixel(i, j, sf::Color::Blue);
 
                         break;
 
@@ -117,13 +130,19 @@ void Drawer::updateField()
 
                     case TEXT:
 
-                        //@TODO: solve the text style problem
+                        fieldImage.setPixel(i, j, sf::Color::White);
 
                         if(i % 30 == 0 && j % 20 == 0)
                         {
-                            fieldText.setPosition(i, j);
-                            fieldText.setString(std::to_string((int)std::round(100 * E)));
-                            window.draw(fieldText);
+                            fieldText.emplace_back();
+                            fieldText.back().setFont(font);
+                            fieldText.back().setCharacterSize(15);
+
+                            realistic ? fieldText.back().setString(std::to_string((int)std::round(E)))
+                                      : fieldText.back().setString(std::to_string((int)std::round(100*E)));
+
+                            fieldText.back().setPosition(i, j);
+                            fieldText.back().setFillColor(sf::Color::Black);
                         }
 
                         break;
@@ -134,6 +153,19 @@ void Drawer::updateField()
             else
             {
                 fieldImage.setPixel(i, j, sf::Color::White);
+
+                if(style == Style::TEXT)
+                {
+                    if(i % 30 == 0 && j % 20 == 0)
+                    {
+                        fieldText.emplace_back();
+                        fieldText.back().setFont(font);
+                        fieldText.back().setCharacterSize(15);
+                        fieldText.back().setString("0");
+                        fieldText.back().setPosition(i, j);
+                        fieldText.back().setFillColor(sf::Color::Black);
+                    }
+                }
             }
         }
     }
@@ -145,11 +177,32 @@ void Drawer::render()
 {
     window.clear();
 
-    if(style != Style::TEXT)
-        window.draw(fieldSprite);
+    switch(style)
+    {
+        case UGLY:
 
-    if(style == Style::UGLY)
-        drawParticles();
+            window.draw(fieldSprite);
+            drawParticles();
+            break;
+
+        case BEAUTY:
+
+            window.draw(fieldSprite);
+            break;
+
+        case TEXT:
+
+            window.draw(fieldSprite);
+
+            for (auto& t: fieldText)
+            {
+                window.draw(t);
+            }
+
+            fieldText.clear();
+
+            break;
+    }
 
     window.display();
 }
