@@ -15,7 +15,7 @@ Drawer::Drawer(Field& field): field(field)
     style = Style::UGLY;
     realistic = true;
 
-    font.loadFromFile("../Ressources/DTM-Mono.otf");
+    font.loadFromFile("DTM-Mono.otf");
 
     window.setKeyRepeatEnabled(false);
 }
