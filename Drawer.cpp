@@ -1,6 +1,12 @@
 
 #include "Drawer.h"
 
+/**
+ * @brief "Drawer" class constructor.
+ * @details Creates the window, the field image, texture and
+ * sprite, and sets the drawing style, realism and font.
+ * @param field Reference to the field to be drawn.
+ */
 Drawer::Drawer(Field& field): field(field)
 {
     sf::VideoMode windowBounds = sf::VideoMode::getDesktopMode();
@@ -20,6 +26,9 @@ Drawer::Drawer(Field& field): field(field)
     window.setKeyRepeatEnabled(false);
 }
 
+/**
+ * Update loop.
+ */
 void Drawer::update()
 {
     while(window.pollEvent(sfEvent))
@@ -33,10 +42,15 @@ void Drawer::update()
     updateField();
 }
 
+/**
+ * Keybinds update loop.
+ */
 void Drawer::updateKeybinds()
 {
+    //Add particles
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && sfEvent.KeyPressed)
     {
+        //To avoid having two particles in the same place
         if(!field.getParticles()->empty())
         {
             if(field.getParticles()->back().x != sf::Mouse::getPosition(window).x || field.getParticles()->back().y != sf::Mouse::getPosition(window).y)
@@ -64,6 +78,7 @@ void Drawer::updateKeybinds()
         }
     }
 
+    //Delete particles
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::X) && sfEvent.type == sf::Event::KeyPressed)
     {
         if(sfEvent.key.shift)
@@ -72,6 +87,7 @@ void Drawer::updateKeybinds()
             field.getParticles()->pop_back();
     }
 
+    //Drawing style
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && sfEvent.type == sf::Event::KeyPressed)
     {
         style = Style::UGLY;
@@ -88,6 +104,7 @@ void Drawer::updateKeybinds()
         realistic = false;
     }
 
+    //Realism
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::R) && sfEvent.type == sf::Event::KeyPressed)
     {
         realistic ? realistic = false
@@ -95,13 +112,17 @@ void Drawer::updateKeybinds()
     }
 }
 
+/**
+ * Field update loop.
+ */
 void Drawer::updateField()
 {
+
     for (int i = 0; i < window.getSize().x; ++i)
     {
         for (int j = 0; j < window.getSize().y; ++j)
         {
-            static float E;
+            static float E; //To call fieldAtPoint() only once
 
             if(!field.getParticles()->empty())
             {
@@ -109,26 +130,26 @@ void Drawer::updateField()
 
                 switch (style)
                 {
-                    case UGLY:
+                    case Style::UGLY:
 
-                        field.nearPositive(i, j, realistic) ? fieldImage.setPixel(i, j, sf::Color::Red)
-                                                            : fieldImage.setPixel(i, j, sf::Color::Blue);
+                        E > 0 ? fieldImage.setPixel(i, j, sf::Color::Red)
+                              : fieldImage.setPixel(i, j, sf::Color::Blue);
 
                         break;
 
-                    case BEAUTY:
+                    case Style::BEAUTY:
 
                         if(i % 30 == 0 && j % 30 == 0)
                         {
                             field.getFields()->push_back(E);
-                            field.setFieldRange();
+                            field.fieldRange();
                         }
 
                         fieldImage.setPixel(i, j, getThreeGradientColor((E - field.lower) / (field.upper - field.lower)));
 
                         break;
 
-                    case TEXT:
+                    case Style::TEXT:
 
                         fieldImage.setPixel(i, j, sf::Color::White);
 
@@ -172,24 +193,27 @@ void Drawer::updateField()
     fieldTexture.update(fieldImage);
 }
 
+/**
+ * Render function.
+ */
 void Drawer::render()
 {
     window.clear();
 
     switch(style)
     {
-        case UGLY:
+        case Style::UGLY:
 
             window.draw(fieldSprite);
             drawParticles();
             break;
 
-        case BEAUTY:
+        case Style::BEAUTY:
 
             window.draw(fieldSprite);
             break;
 
-        case TEXT:
+        case Style::TEXT:
 
             window.draw(fieldSprite);
 
@@ -206,6 +230,9 @@ void Drawer::render()
     window.display();
 }
 
+/**
+ * Particles draw function.
+ */
 void Drawer::drawParticles()
 {
     for (auto& currentParticle: *field.getParticles())
@@ -221,11 +248,21 @@ void Drawer::drawParticles()
     }
 }
 
+/**
+ * Gradient function. By default, gradient goes from blue to
+ * white, and finally to red.
+ * @param val Normalized value
+ * @return The color corresponding to 'val' in the gradient
+ */
 sf::Color Drawer::getThreeGradientColor(float val)
 {
+    //The colors of the gradient and their components
     static float color[3][3] = { {0,0,1}, {1,1,1}, {1,0,0} };
 
+    //Two indices that will indicate in which section 'val'
+    // is (between red and white or between white and blue)
     int idx1, idx2;
+    //The relative value of 'val' in this section
     float localVal = 0;
 
     if(val <= 0)
@@ -234,12 +271,19 @@ sf::Color Drawer::getThreeGradientColor(float val)
         idx1 = idx2 = 2;
     else
     {
-        val = val * 2;
+        val = val * 2; //There are two possible sections, so
+                       // val's percentage is doubled (25% of the
+                       // whole gradient corresponds to 50% of the
+                       // first section)
         idx1  = std::floor(val);
-        idx2  = idx1+1;
-        localVal = val - (float)idx1;
+        idx2  = idx1 + 1;
+        localVal = val - (float)idx1; //Local percentage
     }
 
+    //The color corresponding to val in the gradient is the local
+    // percentage (localVal) between two colors of the gradient
+    // (idx1 and idx2), multiplied by 255 to correspond to the
+    // range accepted by SFML.
     sf::Uint8 red   = 255*((color[idx2][0] - color[idx1][0])*localVal + color[idx1][0]);
     sf::Uint8 green = 255*((color[idx2][1] - color[idx1][1])*localVal + color[idx1][1]);
     sf::Uint8 blue  = 255*((color[idx2][2] - color[idx1][2])*localVal + color[idx1][2]);
@@ -247,6 +291,9 @@ sf::Color Drawer::getThreeGradientColor(float val)
     return sf::Color(red, green, blue);
 }
 
+/**
+ * Main window loop.
+ */
 void Drawer::run()
 {
     while(window.isOpen())

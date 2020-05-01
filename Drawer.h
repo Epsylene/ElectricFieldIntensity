@@ -1,12 +1,14 @@
 
 #pragma once
 
-#include <iostream>
-
 #include "SFML/Graphics.hpp"
 #include "Field.h"
 
-enum Style
+/**
+ * @enum Style
+ * @brief Enum containing the drawing styles switches.
+ */
+enum class Style
 {
     UGLY = 0, BEAUTY, TEXT
 };

@@ -1,14 +1,8 @@
-//
-// Created by Victor Rodriguez on 23/03/2020.
-//
 
 #pragma once
 
-#include <array>
-#include <iostream>
 #include <cmath>
 #include <vector>
-#include <SFML/System/Vector2.hpp>
 
 class Field
 {
@@ -22,10 +16,7 @@ class Field
                 short q;
 
                 Particle(short x, short y, short charge):
-                        x(x), y(y), q(charge)
-                        {
-
-                        }
+                        x(x), y(y), q(charge) {}
         };
 
         std::vector<Particle> particuli;
@@ -41,9 +32,8 @@ class Field
         float lower = 0;
         float upper = 0;
 
-        bool nearPositive(int x, int y, bool realistic);
         float fieldAtPoint(int x, int y, bool realistic);
-        void setFieldRange();
+        void fieldRange();
         std::vector<Particle>* getParticles();
         std::vector<float>* getFields();
 };
