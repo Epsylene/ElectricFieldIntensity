@@ -36,7 +36,10 @@ The code was written in C++17 (although any version higher than C++11 should be 
 # Some bugs
 
 ![Bug 1](https://i.imgur.com/U9C4sad.png)
+Messing with gradient wasn't a good idea.
 
 ![Bug 2](https://i.imgur.com/fh6cBVc.png)
+This one is actually pretty interesting, and even good-looking.
 
 ![Bug 3](https://i.imgur.com/yJd3ZPi.png)
+That's what you get if you don't normalize the field in the gradient.
