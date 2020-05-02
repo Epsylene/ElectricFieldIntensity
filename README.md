@@ -14,7 +14,7 @@ There is also a *Realistic* flag which can be set on and off with `R`; in the fi
 
 ## Build tools
 
-The code was written in C++17 (although any version higher than C++11 should be fine) and compiled with Mingw-w64 7.3.0 32-bits. SFML 2.5.1 32-bits and CMake 3.15 were used.
+The code was written in C++17 (although any version higher than C++11 should be fine) and compiled with Mingw-w64 7.3.0 32-bits and CMake 3.15. SFML 2.5.1 was used.
 
 # Images
 ## Ugly
